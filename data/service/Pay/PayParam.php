@@ -57,12 +57,15 @@ class PayParam extends BaseService
     /**
      * ********************************************支付宝支付参数******************************************
      */
-    protected $ali_partnerid;
- // 支付宝商户id 以2088开始的纯数字
-    protected $ali_seller;
- // 支付宝商户账号(邮箱)
-    protected $ali_key;
- // 支付宝商户秘钥
+    protected $gatewayUrl;
+ //支付宝网关
+    protected $app_id;
+ // 支付宝APPID
+    protected $merchant_private_key;
+ // 支付宝商户私钥
+    protected $alipay_public_key;
+ // 支付宝RSA2公钥
+
     protected $apiclient_cert;
  // 数字证书密钥
     protected $apiclient_key;
@@ -138,10 +141,12 @@ class PayParam extends BaseService
         
         // 获取支付宝支付参数(统一支付到平台账户)
         $alipay_config = $config->getAlipayConfig($instance);
-        $this->ali_partnerid = $alipay_config['value']['ali_partnerid'];
-        $this->ali_seller = $alipay_config['value']['ali_seller'];
-        $this->ali_key = $alipay_config['value']['ali_key'];
-        
+        $this->gatewayUrl=$alipay_config['value']['gatewayUrl'];
+        $this->app_id = $alipay_config['value']['app_id'];
+        $this->merchant_private_key = $alipay_config['value']['merchant_private_key'];
+        $this->alipay_public_key = $alipay_config['value']['alipay_public_key'];
+
+
         // 获取银联支付参数(统一支付到平台账号 )
         $unionpay_config = $config->getUnionpayConfig($instance);
         $this->union_merid = $unionpay_config['value']['merchant_number'];

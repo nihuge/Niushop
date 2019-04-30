@@ -2,24 +2,24 @@
 {block name="main"}
 <div class="set-style">
 	<dl>
-		<dt>账号：</dt>
+		<dt>APP ID：</dt>
 		<dd>
-			<input id="ali_seller" type="text" value="{$config['value']['ali_seller']}" class="input-common long" />
-			<p class="hint">支付宝账户</p>
+			<input id="app_id" type="text" value="{$config['value']['app_id']}" class="input-common long" />
+			<p class="hint">应用ID</p>
 		</dd>
 	</dl>
 	<dl>
-		<dt>合作者身份ID：</dt>
+		<dt>应用私钥：</dt>
 		<dd>
-			<input id="ali_partnerid" type="text" value="{$config['value']['ali_partnerid']}" class="input-common long" />
-			<p class="hint">支付宝合作者身份ID（PID）</p>
+			<textarea id="merchant_private_key" class="textarea-common big">{$config['value']['merchant_private_key']}</textarea>
+			<p class="hint">签名用的和支付宝已经约定好的RSA2私钥</p>
 		</dd>
 	</dl>
-		<dl>
-		<dt>安全校验码：</dt>
+	<dl>
+		<dt>RSA2公钥：</dt>
 		<dd>
-			<input id="ali_key" type="text" value="{$config['value']['ali_key']}" class="input-common long" />
-			<p class="hint">支付宝老版MD5密钥</p>
+			<textarea id="alipay_public_key" class="textarea-common big">{$config['value']['alipay_public_key']}</textarea>
+			<p class="hint">签名用的和支付宝已经约定好的RSA2公钥</p>
 		</dd>
 	</dl>
 	<dl>
@@ -60,9 +60,9 @@
 </div>
 <script>
 function setConfigAjax(){
-	var ali_partnerid = $("#ali_partnerid").val();
-	var ali_seller = $("#ali_seller").val();
-	var ali_key = $("#ali_key").val();
+	var app_id = $("#app_id").val();
+	var merchant_private_key = $("#merchant_private_key").val();
+	var alipay_public_key = $("#alipay_public_key").val();
 	var is_use = 0;
 	if($("#is_use").is(":checked")){
 		is_use = 1;
@@ -76,11 +76,11 @@ function setConfigAjax(){
 	
 	$.ajax({
 		type:"post",
-		url:"{:__URL('ADMIN_MAIN/config/alipayconfig')}",
+		url:"{:__URL('ADMIN_MAIN/config/payaliconfig')}",
 		data:{
-			'partnerid':ali_partnerid,
-			'seller':ali_seller,
-			'ali_key':ali_key,
+			'app_id':app_id,
+			'merchant_private_key':merchant_private_key,
+			'alipay_public_key':alipay_public_key,
 			'is_use' : is_use,
 			'type' : 'alipay',
 			

@@ -27,7 +27,7 @@ define("__ROOT__", $root);
 /**
  * *************************************************************伪静态*******************************************************************************
  */
-define("REWRITE_MODEL", True); // 设置伪静态
+define("REWRITE_MODEL", false); // 设置伪静态
                                 // 入口文件,系统未开启伪静态
 $rewrite = REWRITE_MODEL;
 if (! $rewrite) {
@@ -64,7 +64,8 @@ return [
     // 入口自动绑定模块
     'auto_bind_module' => false,
     // 注册的根命名空间
-    'root_namespace' => [],
+    'root_namespace' => [
+    ],
     // 扩展配置文件
     'extra_config_list' => [
         'database',
