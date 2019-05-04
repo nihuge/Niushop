@@ -396,7 +396,7 @@ class Pay extends Controller
         } else {
             // 验证失败
             echo "fail";
-            
+            Log::write("支付宝------------------------------------retval：验证失败");
             // $this->assign("status", 2);
             // $this->assign("out_trade_no", $out_trade_no);
             // return view($this->style . "Pay/payCallback");
@@ -418,19 +418,15 @@ class Pay extends Controller
         if ($verify_result) {
             $trade_no = request()->get('trade_no', '');
             $trade_status = request()->get('trade_status', '');
-            
-            if ($trade_no == 'TRADE_FINISHED' || $trade_status == 'TRADE_SUCCESS') {
-                // return view($this->style . 'Pay/pay_success');
-                // echo "<h1>支付成功</h1>";
-                $this->assign("status", 1);
-                if (request()->isMobile()) {
-                    return view($this->style . "Pay/payCallback");
-                } else {
-                    return view($this->style . "Pay/payCallbackPc");
-                }
+            // return view($this->style . 'Pay/pay_success');
+            // echo "<h1>支付成功</h1>";
+            $this->assign("status", 1);
+            if (request()->isMobile()) {
+                return view($this->style . "Pay/payCallback");
             } else {
-                echo "trade_status=" . $trade_status;
+                return view($this->style . "Pay/payCallbackPc");
             }
+
             $this->assign("orderNumber", $out_trade_no);
             $this->assign("msg", 1);
         } else {

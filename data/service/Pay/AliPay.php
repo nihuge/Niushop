@@ -16,12 +16,22 @@
  */
 namespace data\service\Pay;
 
+//require_once(dirname(dirname(dirname(__FILE__))).'/service/pay/aop/request/AlipayTradePagePayRequest.php');
+//require_once(dirname(dirname(dirname(__FILE__))).'/service/pay/aop/AopClient.php');
+//require_once(dirname(dirname(dirname(__FILE__))).'/service/pay/AlipayTradeService.php');
+//require_once(dirname(dirname(dirname(__FILE__))).'/service/pay/AlipayTradePagePayContentBuilder.php');
+
+
 use data\service\Pay\PayParam;
 use data\extend\alipay\AlipaySubmit as AlipaySubmit;
 use data\extend\alipay\AlipayNotify as AlipayNotify;
 use think\Cookie;
 use think\Request;
 use think\Log;
+//use data\service\pay\AlipayTradeService;
+//use data\service\pay\AlipayTradePagePayContentBuilder;
+//use data\service\pay\aop\request\AlipayTradePagePayRequest;
+//require "data/extend/alipay/buildermodel/AlipayTradePagePayContentBuilder.php";
 
 /**
  * 功能说明：自定义支付宝支付接入类(应用于商户立即转账create_direct_pay_by_user)
@@ -46,26 +56,28 @@ class AliPay extends PayParam
      */
     public function getAlipayConfig()
     {
-        // 合作身份者id，以2088开头的16位纯数字
-        $alipay_config['partner'] = $this->ali_partnerid;
+        //支付宝网关
+        $alipay_config['gatewayUrl'] = $this->gatewayUrl;
+        // 支付宝APPID
+        $alipay_config['app_id'] = $this->app_id;
         
-        // 收款支付宝账号
-        $alipay_config['seller_email'] = $this->ali_seller;
+        // 支付宝商户私钥
+        $alipay_config['merchant_private_key'] = $this->merchant_private_key;
         
-        // 安全检验码，以数字和字母组成的32位字符
-        $alipay_config['key'] = $this->ali_key;
+        // 支付宝RSA2公钥
+        $alipay_config['alipay_public_key'] = $this->alipay_public_key;
         // 签名方式 不需修改
-        $alipay_config['sign_type'] = strtoupper('MD5');
+        $alipay_config['sign_type'] = strtoupper('RSA2');
         
         // 字符编码格式 目前支持 gbk 或 utf-8
-        $alipay_config['input_charset'] = strtolower('utf-8');
+        $alipay_config['charset'] = strtolower('utf-8');
         
         // ca证书路径地址，用于curl中ssl校验
         // 请保证cacert.pem文件在当前文件夹目录中
-        $alipay_config['cacert'] = getcwd() . '\\cacert.pem';
+        //$alipay_config['cacert'] = getcwd() . '\\cacert.pem';
         
         // 访问模式,根据自己的服务器是否支持ssl访问，若支持请选择https；若不支持请选择http
-        $alipay_config['transport'] = 'http';
+        //$alipay_config['transport'] = 'http';
         return $alipay_config;
     }
 
@@ -136,7 +148,7 @@ class AliPay extends PayParam
             $payment_type = 1;
             $parArr['seller_id'] = trim($alipay_config['partner']);
         } else {
-            $service = 'create_direct_pay_by_user';
+            $service = 'alipay.trade.page.pay';
         }
 
         // 构造要请求的参数数组，无需改动
@@ -160,9 +172,18 @@ class AliPay extends PayParam
             "_input_charset" => trim(strtolower($alipay_config['input_charset']))
         );
         */
-
+        /*
         $parameter = array(
-            
+            "app_id"=>"",
+            "method"=>"",
+            "charset"=>"utf-8",
+            "sign_type"=>"",
+            "sign"=>"",
+            "timestamp"=>"",
+            "version"=>"1.0",
+            "notify_url"=>$notify_url,
+            "return_url"=>$return_url,
+            "biz_content"
         );
 
         $parameter = array_merge($parArr, $parameter);
@@ -170,8 +191,33 @@ class AliPay extends PayParam
         $alipaySubmit = new AlipaySubmit($alipay_config);
         
         $html_text = $alipaySubmit->buildRequestForm($parameter, "get", "确认");
+        */
         // echo $html_text;
-        return $html_text;
+
+        $alipay_config['notify_url'] = $notify_url;
+        $alipay_config['return_url'] = $return_url;
+
+        //构造参数
+        $payRequestBuilder = new AlipayTradePagePayContentBuilder();
+        $payRequestBuilder->setBody($body);
+        $payRequestBuilder->setSubject($subject);
+        $payRequestBuilder->setTotalAmount($total_fee);
+        $payRequestBuilder->setOutTradeNo($out_trade_no);
+
+        //$payRequestBuilder = "";
+
+        $aop = new AlipayTradeService($alipay_config);
+
+        /**
+         * pagePay 电脑网站支付请求
+         * @param $builder 业务参数，使用buildmodel中的对象生成。
+         * @param $return_url 同步跳转地址，公网可以访问
+         * @param $notify_url 异步通知地址，公网可以访问
+         * @return $response 支付宝返回的信息
+         */
+        $response = $aop->pagePay($payRequestBuilder,$alipay_config['return_url'],$alipay_config['notify_url']);
+
+        return $response;
     }
     /**
      * 订单关闭

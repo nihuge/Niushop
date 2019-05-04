@@ -361,17 +361,27 @@ class Config extends BaseService implements IConfig
     }
     
     /*
+     * 重写Alipay支付配置
      * (non-PHPdoc)
      * @see \data\api\IConfig::setAlipayConfig()
      */
-    public function setAlipayConfig($instanceid, $partnerid, $seller, $ali_key, $is_use)
+    public function setAlipayConfig($instanceid, $app_id, $merchant_private_key, $alipay_public_key, $is_use)
     {
         Cache::set("getAlipayConfig" . $instanceid, null);
         
-        $data = array(
-            'ali_partnerid' => $partnerid,
-            'ali_seller' => $seller,
-            'ali_key' => $ali_key
+        $data = array (
+            //应用ID,您的APPID。
+            'app_id' => $app_id,
+            //商户私钥
+            'merchant_private_key' => $merchant_private_key,
+            //编码格式
+            'charset' => "UTF-8",
+            //签名方式,新版支付接口强制RSA2签名
+            'sign_type'=>"RSA2",
+            //支付宝网关
+            'gatewayUrl' => "https://openapi.alipaydev.com/gateway.do",
+            //支付宝公钥,查看地址：https://openhome.alipay.com/platform/keyManage.htm 对应APPID下的支付宝公钥。
+            'alipay_public_key' => $alipay_public_key,
         );
         $value = json_encode($data);
         $info = $this->config_module->getInfo([

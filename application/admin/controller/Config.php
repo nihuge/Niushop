@@ -27,6 +27,7 @@ use data\service\Upgrade;
 use data\service\Notice;
 use Qiniu\json_decode;
 use data\service\WebSite;
+use think\Request;
 
 /**
  * 网站设置模块控制器
@@ -378,12 +379,12 @@ class Config extends BaseController
         $web_config = new WebConfig();
         if (request()->isAjax()) {
             // 支付宝
-            $partnerid = str_replace(' ', '', request()->post('partnerid', ''));
-            $seller = str_replace(' ', '', request()->post('seller', ''));
-            $ali_key = str_replace(' ', '', request()->post('ali_key', ''));
+            $app_id = str_replace(' ', '', request()->post('app_id', ''));
+            $merchant_private_key = str_replace(' ', '', request()->post('merchant_private_key', ''));
+            $alipay_public_key = str_replace(' ', '', request()->post('alipay_public_key', ''));
             $is_use = request()->post('is_use', 0);
             // 获取数据
-            $retval = $web_config->setAlipayConfig($this->instance_id, $partnerid, $seller, $ali_key, $is_use);
+            $retval = $web_config->setAlipayConfig($this->instance_id, $app_id, $merchant_private_key, $alipay_public_key, $is_use);
             return AjaxReturn($retval);
         }
         $data = $web_config->getAlipayConfig($this->instance_id);

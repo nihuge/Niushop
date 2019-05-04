@@ -6,11 +6,11 @@ return [
 // 服务器地址
 'hostname'       => '127.0.0.1',
 // 数据库名
-'database'       => 'shop_0csy_com',
+'database'       => 'niushop',
 // 用户名
-'username'       => 'shop_0csy_com',
+'username'       => 'root',
 // 密码
-'password'       => 'jBYmKZ7XAn',
+'password'       => 'root',
 // 端口
 'hostport'       => '3306',
 // 连接dsn
