@@ -1,5 +1,5 @@
 <?php
-namespace data\extend\alipay;
+namespace data\service\pay;
 /* *
  * 功能：支付宝电脑网站支付
  * 版本：2.0
